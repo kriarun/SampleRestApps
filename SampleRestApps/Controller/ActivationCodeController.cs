@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SampleRestApps.Models;
+using SampleRestApps.Services;
 
 namespace SampleRestApps.Controller;
 
