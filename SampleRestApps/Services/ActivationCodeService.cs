@@ -19,20 +19,7 @@ public class ActivationCodeService : IActivationCodeService
         ActivationCodeRequest request,
         CancellationToken cancellationToken)
     {
-        try
-        {
-            return await _client.SendActivationCodesAsync(tenantId, contractId, request, cancellationToken);
-        }
-        catch (ApiException ex)
-        {
-            var error = ex.TryDeserializeError();
-
-            _logger.LogError(ex,
-                "Downstream rejected activation code send. TenantId={TenantId}, ContractId={ContractId}, Code={Code}, Subsystem={Subsystem}",
-                tenantId, contractId, error?.Code, error?.Subsystem);
-
-            throw;
-        }
+        return await _client.SendActivationCodesAsync(tenantId, contractId, request, cancellationToken);
     }
 
     public async Task DeleteActivationCodesAsync(
@@ -40,19 +27,6 @@ public class ActivationCodeService : IActivationCodeService
         string contractId,
         CancellationToken cancellationToken)
     {
-        try
-        {
-            await _client.DeleteActivationCodesAsync(tenantId, contractId, cancellationToken);
-        }
-        catch (ApiException ex)
-        {
-            var error = ex.TryDeserializeError();
-
-            _logger.LogError(ex,
-                "Downstream rejected activation code delete. TenantId={TenantId}, ContractId={ContractId}, Code={Code}, Subsystem={Subsystem}",
-                tenantId, contractId, error?.Code, error?.Subsystem);
-
-            throw;
-        }
+        await _client.DeleteActivationCodesAsync(tenantId, contractId, cancellationToken);
     }
 }

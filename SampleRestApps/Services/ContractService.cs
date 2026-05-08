@@ -16,19 +16,6 @@ public class ContractService : IContractService
         string contractId,
         CancellationToken cancellationToken)
     {
-        try
-        {
-            await _client.UploadContractAsync(tenantId, contractId, cancellationToken);
-        }
-        catch (ApiException ex)
-        {
-            var error = ex.TryDeserializeError();
-
-            _logger.LogError(ex,
-                "Downstream rejected contract upload. TenantId={TenantId}, ContractId={ContractId}, Code={Code}, Subsystem={Subsystem}",
-                tenantId, contractId, error?.Code, error?.Subsystem);
-
-            throw;
-        }
+        await _client.UploadContractAsync(tenantId, contractId, cancellationToken);
     }
 }

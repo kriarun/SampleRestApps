@@ -4,6 +4,7 @@ using SampleRestApps.Services;
 
 namespace SampleRestApps.Controller;
 
+[ApiExceptionFilter]
 [ApiController]
 [Route("api/v1/tenants/{tenantId}/contracts/{contractId}/activation-codes")]
 public class ActivationCodeController : ControllerBase
@@ -28,29 +29,10 @@ public class ActivationCodeController : ControllerBase
         [FromBody] ActivationCodeRequest request,
         CancellationToken cancellationToken)
     {
-        try
-        {
-            var result = await _activationCodeService.SendActivationCodesAsync(
-                tenantId, contractId, request, cancellationToken);
+        var result = await _activationCodeService.SendActivationCodesAsync(
+            tenantId, contractId, request, cancellationToken);
 
-            return Ok(result);
-        }
-        catch (ApiException ex)
-        {
-            _logger.LogError(ex,
-                "Downstream failed sending activation codes. TenantId={TenantId}, ContractId={ContractId}, Status={StatusCode}",
-                tenantId, contractId, (int)ex.StatusCode);
-
-            return StatusCode(502, new ProblemDetails { Detail = "Downstream API unavailable." });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex,
-                "Unexpected error sending activation codes. TenantId={TenantId}, ContractId={ContractId}",
-                tenantId, contractId);
-
-            return StatusCode(500, new ProblemDetails { Detail = "An unexpected error occurred." });
-        }
+        return Ok(result);
     }
 
     [HttpDelete]
@@ -61,28 +43,9 @@ public class ActivationCodeController : ControllerBase
         [FromRoute] string contractId,
         CancellationToken cancellationToken)
     {
-        try
-        {
-            await _activationCodeService.DeleteActivationCodesAsync(
-                tenantId, contractId, cancellationToken);
+        await _activationCodeService.DeleteActivationCodesAsync(
+            tenantId, contractId, cancellationToken);
 
-            return NoContent();
-        }
-        catch (ApiException ex)
-        {
-            _logger.LogError(ex,
-                "Downstream failed deleting activation codes. TenantId={TenantId}, ContractId={ContractId}, Status={StatusCode}",
-                tenantId, contractId, (int)ex.StatusCode);
-
-            return StatusCode(502, new ProblemDetails { Detail = "Downstream API unavailable." });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex,
-                "Unexpected error deleting activation codes. TenantId={TenantId}, ContractId={ContractId}",
-                tenantId, contractId);
-
-            return StatusCode(500, new ProblemDetails { Detail = "An unexpected error occurred." });
-        }
+        return NoContent();
     }
 }

@@ -1,5 +1,5 @@
 ﻿namespace SampleRestApps.Controller;
-
+[ApiExceptionFilter]
 [ApiController]
 [Route("api/v1/tenants/{tenantId}/documents/{contractId}")]
 public class DocumentController : ControllerBase
@@ -40,28 +40,12 @@ public class DocumentController : ControllerBase
         LetterType letterType,
         CancellationToken cancellationToken)
     {
-        try
-        {
+       
             var result = await _documentService.SendLetterAsync(
                 tenantId, contractId, request, letterType, cancellationToken);
 
             return Ok(result);
-        }
-        catch (ApiException ex)
-        {
-            _logger.LogError(ex,
-                "Downstream failed sending {LetterType}. TenantId={TenantId}, ContractId={ContractId}, Status={StatusCode}",
-                letterType, tenantId, contractId, (int)ex.StatusCode);
-
-            return StatusCode(502, new ProblemDetails { Detail = "Downstream API unavailable." });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex,
-                "Unexpected error sending {LetterType}. TenantId={TenantId}, ContractId={ContractId}",
-                letterType, tenantId, contractId);
-
-            return StatusCode(500, new ProblemDetails { Detail = "An unexpected error occurred." });
-        }
+      
+       
     }
 }

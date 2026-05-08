@@ -1,4 +1,6 @@
 ﻿namespace SampleRestApps.Controller;
+
+[ApiExceptionFilter]
 [ApiController]
 [Route("api/v1/tenants/{tenantId}/contracts/{contractId}")]
 public class ContractController : ControllerBase
@@ -25,26 +27,8 @@ public class ContractController : ControllerBase
             "UploadContract called. TenantId={TenantId}, ContractId={ContractId}",
             tenantId, contractId);
 
-        try
-        {
-            await _contractService.UploadContractAsync(tenantId, contractId, cancellationToken);
-            return Ok();
-        }
-        catch (ApiException ex)
-        {
-            _logger.LogError(ex,
-                "Downstream failed uploading contract. TenantId={TenantId}, ContractId={ContractId}, Status={StatusCode}",
-                tenantId, contractId, (int)ex.StatusCode);
 
-            return StatusCode(502, new ProblemDetails { Detail = "Downstream API unavailable." });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex,
-                "Unexpected error uploading contract. TenantId={TenantId}, ContractId={ContractId}",
-                tenantId, contractId);
-
-            return StatusCode(500, new ProblemDetails { Detail = "An unexpected error occurred." });
-        }
+        await _contractService.UploadContractAsync(tenantId, contractId, cancellationToken);
+        return Ok();
     }
 }
